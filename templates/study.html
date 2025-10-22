@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Study: {{ deck.name }}</h3>
+
+<div class="combo-overlay {% if combo_active and combo > 1 %}show{% endif %}">
+  <div class="combo-text">🔥 COMBO x{{ combo }}!</div>
+</div>
+
+<div class="card bg-secondary p-4 feedback-card 
+            {% if feedback == 'correct' %}correct{% elif feedback == 'wrong' %}wrong{% endif %}">
+  <p><strong>Question:</strong> {{ card.question }}</p>
+  
+  <form method="post" action="/answer/{{ card.id }}">
+    <input name="answer" class="form-control mb-2" placeholder="Your answer..." required autofocus>
+    <button class="btn btn-info">Submit</button>
+  </form>
+
+  {% if show_answer %}
+  <div id="reveal" class="fade-in mt-3 p-2 rounded bg-danger bg-opacity-25">
+    <strong>Correct Answer:</strong> 
+    <span class="text-warning">{{ card.answer }}</span>
+  </div>
+  {% endif %}
+  
+  <div class="text-end text-muted mt-3">Rarity: {{ card.rarity }}</div>
+</div>
+
+{% if feedback %}
+<script>
+  // 3 sec delay if wrong, shorter if right
+  const delay = "{{ feedback }}" === "wrong" ? 3000 : 1500;
+  setTimeout(() => { window.location.href = "/study/{{ deck.id }}"; }, delay);
+</script>
+{% endif %}
+{% endblock %}

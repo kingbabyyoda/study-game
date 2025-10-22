@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Your Decks</h3>
+<form method="post" action="/deck/create" class="input-group mb-3">
+  <input name="name" class="form-control" placeholder="New deck name..." required>
+  <button class="btn btn-success">Add Deck</button>
+</form>
+
+<div class="list-group">
+  {% for deck in decks %}
+    <a href="/deck/{{ deck.id }}" class="list-group-item list-group-item-action">
+      {{ deck.name }} ({{ deck.cards|length }} cards)
+    </a>
+  {% else %}
+    <div class="text-muted">No decks yet.</div>
+  {% endfor %}
+</div>
+{% endblock %}
