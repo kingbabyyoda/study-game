@@ -6,7 +6,8 @@
   <div class="combo-text">🔥 COMBO x{{ combo }}!</div>
 </div>
 
-<div class="card bg-secondary p-4 feedback-card 
+<div class="card p-4 feedback-card 
+  {% if card.rarity == 'Chromatic' %}chromatic{% else %}bg-secondary{% endif %} 
             {% if feedback == 'correct' %}correct{% elif feedback == 'wrong' %}wrong{% endif %}">
   <p><strong>Question:</strong> {{ card.question }}</p>
   

@@ -75,15 +75,20 @@ def view_deck(deck_id):
 
 @app.route("/deck/<int:deck_id>/add", methods=["POST"])
 def add_card(deck_id):
-    rarities = ["Common", "Rare", "Epic", "Legendary"]
-    rarity = random.choices(rarities, weights=[70,20,8,2])[0]
-    card = Card(deck_id=deck_id,
-                question=request.form["question"],
-                answer=request.form["answer"],
-                rarity=rarity)
+    question = request.form["question"]
+    answer = request.form["answer"]
+    rarity = request.form["rarity"]
+
+    valid_rarities = ["Common", "Rare", "Epic", "Legendary", "Chromatic"]
+    if rarity not in valid_rarities:
+        rarity = "Common"
+
+    card = Card(deck_id=deck_id, question=question, answer=answer, rarity=rarity)
     db.session.add(card)
     db.session.commit()
+
     return redirect(url_for("view_deck", deck_id=deck_id))
+
 
 @app.route("/study/<int:deck_id>")
 def study(deck_id):
@@ -110,7 +115,14 @@ def answer(card_id):
 
     if correct:
         player.combo += 1
-        rarity_xp = {"Common":10, "Rare":20, "Epic":35, "Legendary":50}[card.rarity]
+        rarity_xp = {
+    "Common": 10,
+    "Rare": 20,
+    "Epic": 35,
+    "Legendary": 50,
+    "Chromatic": 100
+}.get(card.rarity, 10)
+
         xp_gain = int(rarity_xp * combo_multiplier)
         add_xp(player, xp_gain)
         feedback = "correct"

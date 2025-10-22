@@ -1,18 +1,69 @@
 {% extends "base.html" %}
 {% block content %}
-<h3>Your Decks</h3>
-<form method="post" action="/deck/create" class="input-group mb-3">
+<div class="text-center mb-4"  <h1 class="fw-bold text-warning">🎓 Study Game RPG</h1>
+  <p class="text-secondary">Level up your mind - one card at a time!</p>
+</div>
+
+<!-- Player Stats Card -->
+<div class="card bg-secondary p-4 mb-4 text-center border-0 shadow-lg">
+  <h4>{{ player and player.username or 'You' }}</h4>
+  <p class="mb-2">
+    Level <strong>{{ player and player.level or 1 }}</strong>
+    | 🔥 <strong>{{ player and player.streak or 0 }}</strong> day streak
+    | ⚡ Combo: <strong>{{ player and player.combo or 0 }}</strong>
+  </p>
+
+  {% if player and player.combo >= 5 %}
+  <div class="alert alert-warning mt-3 mb-0">
+    ⚡ Combo Bonus Active: +{{ player.combo * 10 }}% XP
+  </div>
+  {% endif %}
+</div>
+
+<!-- Decks Section -->
+<h3 class="mb-3 text-info">Your Decks</h3>
+<form method="post" action="/deck/create" class="input-group mb-4">
   <input name="name" class="form-control" placeholder="New deck name..." required>
   <button class="btn btn-success">Add Deck</button>
-</form>
+  </form>
 
-<div class="list-group">
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
   {% for deck in decks %}
-    <a href="/deck/{{ deck.id }}" class="list-group-item list-group-item-action">
-      {{ deck.name }} ({{ deck.cards|length }} cards)
-    </a>
+  <div class="col">
+    <div class="card bg-dark border border-info h-100">
+      <div class="card-body text-center">
+        <h5 class="card-title text-warning">{{ deck.name }}</h5>
+        <p class="text-muted">{{ deck.cards|length }} cards</p>
+        <a href="/deck/{{ deck.id }}" class="btn btn-outline-info btn-sm">View Deck</a>
+        {% if deck.cards %}
+        <a href="/study/{{ deck.id }}" class="btn btn-success btn-sm ms-2">Study</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
   {% else %}
-    <div class="text-muted">No decks yet.</div>
+  <div class="text-muted">No decks yet. Add one to begin!</div>
   {% endfor %}
 </div>
+
+<hr class="my-5">
+
+<!-- Quests -->
+<h4 class="text-warning">📅 Daily Quests</h4>
+<ul class="list-group">
+  <li class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center">
+    Study 10 cards today
+    <span class="badge bg-success rounded-pill">{{ (player and player.streak >= 1) and "✅" or "⏳" }}</span>
+  </li>
+  <li class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center">
+    Maintain a 3-day streak
+    <span class="badge bg-success rounded-pill">{{ (player and player.streak >= 3) and "✅" or "⏳" }}</span>
+  </li>
+  <li class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center">
+    Reach 100 XP today
+    <span class="badge bg-success rounded-pill">{{ (player and player.xp >= 100) and "✅" or "⏳" }}</span>
+dge bg-success rounded-pill">{{ player.xp >= 100 and "✔️" or "❌" }}</span>
+  </li>
+</ul>
+
 {% endblock %}
